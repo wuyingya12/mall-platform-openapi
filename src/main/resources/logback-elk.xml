@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration>
+<configuration>
+
+    <conversionRule conversionWord="IpAddressConvert"
+                    converterClass="cn.vcfilm.com.car.mall.logbackExt.convert.IpAddressConvert"/>
+    <conversionRule conversionWord="ThreadUUIDConvert"
+                    converterClass="cn.vcfilm.com.car.mall.logbackExt.convert.ThreadUUIDConvert"/>
+    <conversionRule conversionWord="IncrementIdConvert"
+                    converterClass="cn.vcfilm.com.car.mall.logbackExt.convert.IncrementIdConvert"/>
+    <springProfile name="dev">
+        <!--scope="context"会将变量赋加日志中-->
+        <!--<springProperty scope="context" name="filePath" defaultValue="target/log" source="log.filePath.value"/>-->
+        <springProperty scope="local" name="filePath" defaultValue="target/log" source="log.filePath.value"/>
+        <!--base.xml包含一个控制台的输出-->
+        <include resource="org/springframework/boot/logging/logback/base.xml"/>
+        <!--TODO 配置服务器地址-->
+        <property name="ELK_ADDRESS" value="119.10.113.140:4577"/>
+        <logger name="org.springframework.web" level="INFO"/>
+        <logger name="org.springboot.sample" level="INFO"/>
+        <logger name="com.car.mall" level="INFO"/>
+    </springProfile>
+    <springProfile name="test">
+        <!--scope="context"会将变量赋加日志中-->
+        <!--<springProperty scope="context" name="filePath" defaultValue="target/log" source="log.filePath.value"/>-->
+        <springProperty scope="local" name="filePath" defaultValue="target/log" source="log.filePath.value"/>
+        <!--base.xml包含一个控制台的输出-->
+        <include resource="org/springframework/boot/logging/logback/base.xml"/>
+        <!--TODO 配置服务器地址-->
+        <property name="ELK_ADDRESS" value="119.10.113.140:4577"/>
+        <logger name="org.springframework.web" level="INFO"/>
+        <logger name="org.springboot.sample" level="INFO"/>
+        <logger name="com.car.mall" level="INFO"/>
+    </springProfile>
+    <springProfile name="aliyun">
+        <!--scope="context"会将变量赋加日志中-->
+        <!--<springProperty scope="context" name="filePath" defaultValue="log" source="log.filePath.value"/>-->
+        <springProperty scope="local" name="filePath" defaultValue="target/log" source="log.filePath.value"/>
+        <include resource="org/springframework/boot/logging/logback/base.xml"/>
+        <!--TODO 配置服务器地址-->
+        <property name="ELK_ADDRESS" value="127.0.0.1:4577"/>
+        <logger name="org.springframework.web" level="ERROR"/>
+        <logger name="org.springboot.sample" level="ERROR"/>
+        <logger name="com.car.mall" level="WARN"/>
+    </springProfile>
+    <appender name="LOGSTASH-TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${ELK_ADDRESS}</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <provider class="net.logstash.logback.composite.loggingevent.LoggingEventPatternJsonProvider">
+                <pattern>
+                    {"IpAddress":"%IpAddressConvert","ThreadUUID":"%ThreadUUIDConvert","IncrementId":"%IncrementIdConvert","tags":
+                    ["juinke-platform-openapi-service"]}
+                </pattern>
+            </provider>
+        </encoder>
+    </appender>
+    <appender name="LOGSTASH" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <provider class="net.logstash.logback.composite.loggingevent.LoggingEventPatternJsonProvider">
+                <pattern>
+                    {"IpAddress":"%IpAddressConvert","ThreadUUID":"%ThreadUUIDConvert","IncrementId":"%IncrementIdConvert","tags":
+                    ["juinke-platform-openapi-service"]}
+                </pattern>
+            </provider>
+        </encoder>
+        <file>${filePath}/logstash.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${filePath}/logstash-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
+            <maxFileSize>100MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+    <root level="INFO">
+        <!--<appender-ref ref="LOGSTASH"/>-->
+        <appender-ref ref="LOGSTASH-TCP"/>
+    </root>
+</configuration>

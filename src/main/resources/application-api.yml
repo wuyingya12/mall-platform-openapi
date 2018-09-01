@@ -1,0 +1,12 @@
+spring:
+  swagger:
+    group:
+      mall-index-api:
+        group-name: "mall-index-api"
+        title: 商城首页接口                           # api组的标题，会在swagger-ui的标题处描述
+        description: 商城首页相关接口         # api组的描述，会在swagger-ui的描述中显示
+        base-package: com.car.mall.openapi.controller.index
+        path-regex: /mapi/mall/index/.*                    # 匹配到本组的api接口，匹配uri，可以用用正则表达式
+        version: 1.0.0                              # api版本
+        license: 该文档仅限公司内部传阅                    # 授权协议
+        license-url: '#'                            # 授权协议地址

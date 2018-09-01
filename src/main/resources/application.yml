@@ -1,0 +1,41 @@
+server:
+  port: 8089
+
+spring:
+  profiles:
+    include:
+      - test
+      - api
+
+  swagger:
+    enabled: true
+  http:
+    encoding:
+      force: true
+      charset: utf-8
+      enabled: true
+
+
+dubbo:
+  application:
+    name: mall-platform-openapi-service
+    owner: mall
+  scan:
+    basePackages: com.car.mall.swagger.service
+  consumer:
+    version: 1.0.0
+    check: false
+    timeout: 6000
+
+logging:
+  config: classpath:logback-boot.xml
+
+pid:
+  path: /mall/logs/mall-platform-openapi/juinke.pid
+
+filterExclude: /swagger-resources,/swagger-ui.html,/index.html,/shiro/,/v2/api-docs,/webjars
+
+
+cinema:
+  account:
+    key: 0448b83e3877a5f565826fa592dca890
